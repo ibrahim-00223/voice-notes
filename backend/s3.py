@@ -7,9 +7,12 @@ load_dotenv()
 
 AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-AWS_ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL_S3")
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+AWS_REGION = os.getenv("AWS_DEFAULT_REGION", os.getenv("AWS_REGION", "us-east-1"))
+AWS_ENDPOINT_URL = os.getenv("AWS_ENDPOINT_URL", os.getenv("AWS_ENDPOINT_URL_S3"))
+S3_BUCKET_NAME = os.getenv("AWS_S3_BUCKET_NAME", os.getenv("S3_BUCKET_NAME"))
+
+if not S3_BUCKET_NAME:
+    raise RuntimeError("S3_BUCKET_NAME (or AWS_S3_BUCKET_NAME) environment variable is not set")
 
 s3_client = boto3.client(
     "s3",
