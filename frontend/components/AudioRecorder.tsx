@@ -91,21 +91,31 @@ export default function AudioRecorder({ onSuccess }: Props) {
     `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-8">
+    <div
+      className="rounded-xl p-8 border"
+      style={{
+        background: "#111111",
+        borderColor: "rgba(255,255,255,0.08)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+      }}
+    >
       <div className="flex flex-col items-center gap-5">
         {/* Idle */}
         {status === "idle" && (
           <>
             <button
               onClick={startRecording}
-              className="w-20 h-20 rounded-full bg-violet-600 hover:bg-violet-700 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all active:scale-95"
+              className="w-20 h-20 rounded-full text-white flex items-center justify-center shadow-lg transition-all active:scale-95"
+              style={{ background: "#E6004C" }}
+              onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.background = "#cc003d")}
+              onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.background = "#E6004C")}
             >
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2H3v2a9 9 0 0 0 8 8.94V23h2v-2.06A9 9 0 0 0 21 12v-2h-2z" />
               </svg>
             </button>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
               Cliquez pour démarrer l&apos;enregistrement
             </p>
           </>
@@ -123,7 +133,10 @@ export default function AudioRecorder({ onSuccess }: Props) {
               </button>
               <div className="absolute inset-0 rounded-full bg-red-400 animate-ping opacity-30" />
             </div>
-            <p className="text-3xl font-mono font-bold text-gray-900">
+            <p
+              className="text-3xl font-bold"
+              style={{ fontFamily: "var(--font-jetbrains)", color: "#fff" }}
+            >
               {fmt(elapsed)}
             </p>
             <p className="text-sm text-red-500 font-medium flex items-center gap-1.5">
@@ -136,8 +149,14 @@ export default function AudioRecorder({ onSuccess }: Props) {
         {/* Processing */}
         {status === "processing" && (
           <>
-            <div className="w-16 h-16 rounded-full border-4 border-violet-200 border-t-violet-600 animate-spin" />
-            <p className="text-sm text-gray-600">
+            <div
+              className="w-16 h-16 rounded-full border-4 animate-spin"
+              style={{
+                borderColor: "rgba(230,0,76,0.2)",
+                borderTopColor: "#E6004C",
+              }}
+            />
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.55)" }}>
               Transcription en cours…
             </p>
           </>
@@ -146,9 +165,12 @@ export default function AudioRecorder({ onSuccess }: Props) {
         {/* Done */}
         {status === "done" && (
           <>
-            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center"
+              style={{ background: "rgba(74,222,128,0.1)" }}
+            >
               <svg
-                className="w-8 h-8 text-green-600"
+                className="w-8 h-8 text-green-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -161,12 +183,15 @@ export default function AudioRecorder({ onSuccess }: Props) {
                 />
               </svg>
             </div>
-            <p className="text-sm text-green-600 font-medium">
+            <p className="text-sm text-green-400 font-medium">
               Enregistrement traité !
             </p>
             <button
               onClick={reset}
-              className="text-sm text-gray-500 hover:text-gray-900 underline underline-offset-2"
+              className="text-sm underline underline-offset-2 transition-colors"
+              style={{ color: "rgba(255,255,255,0.55)" }}
+              onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.color = "#fff")}
+              onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
             >
               Nouvel enregistrement
             </button>
@@ -176,7 +201,7 @@ export default function AudioRecorder({ onSuccess }: Props) {
         {/* Error */}
         {status === "error" && (
           <>
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-red-950 flex items-center justify-center">
               <svg
                 className="w-8 h-8 text-red-500"
                 fill="none"
@@ -191,10 +216,13 @@ export default function AudioRecorder({ onSuccess }: Props) {
                 />
               </svg>
             </div>
-            <p className="text-sm text-red-600">{error}</p>
+            <p className="text-sm text-red-400">{error}</p>
             <button
               onClick={reset}
-              className="text-sm text-gray-500 hover:text-gray-900 underline underline-offset-2"
+              className="text-sm underline underline-offset-2 transition-colors"
+              style={{ color: "rgba(255,255,255,0.55)" }}
+              onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.color = "#fff")}
+              onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
             >
               Réessayer
             </button>

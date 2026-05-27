@@ -54,11 +54,21 @@ export default function RecordDetailPage() {
   };
 
   if (loading)
-    return <div className="text-center py-16 text-gray-400 text-sm">Chargement…</div>;
+    return (
+      <div
+        className="text-center py-16 text-sm"
+        style={{ color: "rgba(255,255,255,0.28)" }}
+      >
+        Chargement…
+      </div>
+    );
 
   if (!record)
     return (
-      <div className="text-center py-16 text-gray-400 text-sm">
+      <div
+        className="text-center py-16 text-sm"
+        style={{ color: "rgba(255,255,255,0.28)" }}
+      >
         Enregistrement introuvable.
       </div>
     );
@@ -68,7 +78,10 @@ export default function RecordDetailPage() {
       {/* Back */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm transition-colors"
+        style={{ color: "rgba(255,255,255,0.55)" }}
+        onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.color = "#fff")}
+        onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)")}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -77,29 +90,59 @@ export default function RecordDetailPage() {
       </Link>
 
       {/* Record card */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
+      <div
+        className="rounded-xl p-6 border"
+        style={{
+          background: "#111111",
+          borderColor: "rgba(255,255,255,0.08)",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+        }}
+      >
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold text-gray-900 leading-snug">
+            <h1
+              className="text-xl font-bold leading-snug"
+              style={{ fontFamily: "var(--font-syne)", color: "#fff" }}
+            >
               {record.title || "Enregistrement sans titre"}
             </h1>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.28)" }}>
               {formatDate(record.datetime, true)}
             </p>
           </div>
           {record.duration != null && (
-            <span className="text-sm bg-violet-50 text-violet-700 px-3 py-1.5 rounded-full font-medium shrink-0">
+            <span
+              className="text-sm px-3 py-1.5 rounded-full font-medium shrink-0"
+              style={{
+                background: "rgba(230,0,76,0.08)",
+                color: "#ff4d8d",
+                fontFamily: "var(--font-jetbrains)",
+              }}
+            >
               {formatDuration(record.duration)}
             </span>
           )}
         </div>
 
         {/* Transcript */}
-        <div className="mt-5 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+        <div
+          className="mt-5 p-4 rounded-lg"
+          style={{ background: "#1a1a1a" }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-widest mb-2"
+            style={{
+              color: "rgba(255,255,255,0.28)",
+              fontFamily: "var(--font-jetbrains)",
+              letterSpacing: "0.12em",
+            }}
+          >
             Transcription
           </p>
-          <p className="text-gray-700 text-sm leading-relaxed">
+          <p
+            className="text-sm leading-relaxed"
+            style={{ color: "rgba(255,255,255,0.7)" }}
+          >
             {record.title || "—"}
           </p>
         </div>
@@ -108,16 +151,26 @@ export default function RecordDetailPage() {
       {/* Notes */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold" style={{ color: "#fff" }}>
             Notes
-            <span className="ml-2 text-sm font-normal text-gray-400">
+            <span
+              className="ml-2 text-sm font-normal"
+              style={{ color: "rgba(255,255,255,0.28)" }}
+            >
               ({notes.length})
             </span>
           </h2>
           <button
             onClick={handleGenerateNote}
             disabled={generating}
-            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 disabled:opacity-60 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-60"
+            style={{ background: "#E6004C" }}
+            onMouseOver={(e) => {
+              if (!generating) (e.currentTarget as HTMLElement).style.background = "#cc003d";
+            }}
+            onMouseOut={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "#E6004C";
+            }}
           >
             {generating ? (
               <>
@@ -134,13 +187,20 @@ export default function RecordDetailPage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm mb-4">
+          <div className="border rounded-lg p-3 text-sm text-red-400 bg-red-950/30 border-red-900/50 mb-4">
             {error}
           </div>
         )}
 
         {notes.length === 0 ? (
-          <div className="text-center py-10 text-gray-400 text-sm border border-dashed border-gray-200 rounded-lg bg-white">
+          <div
+            className="text-center py-10 text-sm border border-dashed rounded-lg"
+            style={{
+              color: "rgba(255,255,255,0.28)",
+              borderColor: "rgba(255,255,255,0.08)",
+              background: "#111111",
+            }}
+          >
             Aucune note. Cliquez sur &quot;Générer une note&quot; pour créer une synthèse IA.
           </div>
         ) : (

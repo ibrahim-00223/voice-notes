@@ -41,7 +41,10 @@ export default function HomePage() {
     <div className="space-y-8">
       {/* Recorder section */}
       <section>
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        <h1
+          className="text-2xl font-bold mb-4"
+          style={{ fontFamily: "var(--font-syne)", color: "#fff" }}
+        >
           Nouvel enregistrement
         </h1>
         <AudioRecorder
@@ -51,29 +54,45 @@ export default function HomePage() {
 
       {/* List section */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2
+          className="text-lg font-semibold mb-4"
+          style={{ color: "#fff" }}
+        >
           Enregistrements récents
           {!loading && (
-            <span className="ml-2 text-sm font-normal text-gray-400">
+            <span
+              className="ml-2 text-sm font-normal"
+              style={{ color: "rgba(255,255,255,0.28)" }}
+            >
               ({records.length})
             </span>
           )}
         </h2>
 
         {loading && (
-          <div className="text-center py-12 text-gray-400 text-sm">
+          <div
+            className="text-center py-12 text-sm"
+            style={{ color: "rgba(255,255,255,0.28)" }}
+          >
             Chargement…
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 text-sm">
+          <div className="border rounded-lg p-4 text-sm text-red-400 bg-red-950/30 border-red-900/50">
             {error}
           </div>
         )}
 
         {!loading && !error && records.length === 0 && (
-          <div className="text-center py-12 text-gray-400 text-sm border border-dashed border-gray-200 rounded-lg bg-white">
+          <div
+            className="text-center py-12 text-sm border border-dashed rounded-lg"
+            style={{
+              color: "rgba(255,255,255,0.28)",
+              borderColor: "rgba(255,255,255,0.08)",
+              background: "#111111",
+            }}
+          >
             Aucun enregistrement. Commencez ci-dessus !
           </div>
         )}

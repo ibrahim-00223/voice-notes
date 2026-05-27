@@ -6,15 +6,15 @@ import { PostWithPlatform, formatDate } from "@/lib/api";
 const PLATFORM = {
   linkedin: {
     label: "LinkedIn",
-    badge: "bg-blue-50 text-blue-700",
-    border: "border-blue-100",
-    btn: "bg-blue-600 hover:bg-blue-700",
+    badge: { background: "rgba(59,130,246,0.12)", color: "#93c5fd" },
+    border: "rgba(59,130,246,0.2)",
+    btn: { background: "#2563eb", hover: "#1d4ed8" },
   },
   twitter: {
     label: "X / Twitter",
-    badge: "bg-sky-50 text-sky-700",
-    border: "border-sky-100",
-    btn: "bg-sky-500 hover:bg-sky-600",
+    badge: { background: "rgba(14,165,233,0.12)", color: "#7dd3fc" },
+    border: "rgba(14,165,233,0.2)",
+    btn: { background: "#0ea5e9", hover: "#0284c7" },
   },
 } as const;
 
@@ -41,32 +41,63 @@ export default function PostCard({ post, onSendToNocodb, onDelete }: Props) {
   };
 
   return (
-    <div className={`bg-white border rounded-xl p-5 ${cfg.border}`}>
+    <div
+      className="rounded-xl p-5 border transition-all"
+      style={{
+        background: "#111111",
+        borderColor: cfg.border,
+        boxShadow: "0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06)",
+      }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${cfg.badge}`}>
+        <span
+          className="text-xs font-semibold px-2.5 py-1 rounded-full"
+          style={cfg.badge}
+        >
           {cfg.label}
         </span>
-        <span className="text-xs text-gray-400">{formatDate(post.datetime)}</span>
+        <span
+          className="text-xs"
+          style={{ color: "rgba(255,255,255,0.28)", fontFamily: "var(--font-jetbrains)" }}
+        >
+          {formatDate(post.datetime)}
+        </span>
       </div>
 
       {/* Title */}
       {post.title && (
-        <p className="font-semibold text-gray-900 mb-2">{post.title}</p>
+        <p className="font-semibold mb-2" style={{ color: "#fff" }}>
+          {post.title}
+        </p>
       )}
 
       {/* Content */}
-      <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+      <p
+        className="text-sm whitespace-pre-wrap leading-relaxed"
+        style={{ color: "rgba(255,255,255,0.7)" }}
+      >
         {post.content || "—"}
       </p>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+      <div
+        className="flex items-center gap-2 mt-4 pt-4 border-t"
+        style={{ borderColor: "rgba(255,255,255,0.08)" }}
+      >
         {onSendToNocodb && (
           <button
             onClick={handleSend}
             disabled={sending || sent}
-            className={`text-sm text-white px-3 py-1.5 rounded-lg transition-colors font-medium disabled:opacity-60 ${cfg.btn}`}
+            className="text-sm text-white px-3 py-1.5 rounded-lg font-medium transition-colors disabled:opacity-60"
+            style={{ background: cfg.btn.background }}
+            onMouseOver={(e) => {
+              if (!sending && !sent)
+                (e.currentTarget as HTMLElement).style.background = cfg.btn.hover;
+            }}
+            onMouseOut={(e) => {
+              (e.currentTarget as HTMLElement).style.background = cfg.btn.background;
+            }}
           >
             {sent ? "✓ Envoyé" : sending ? "Envoi…" : "Envoyer vers NocoDB"}
           </button>
@@ -74,7 +105,10 @@ export default function PostCard({ post, onSendToNocodb, onDelete }: Props) {
         {onDelete && (
           <button
             onClick={() => onDelete(post.id)}
-            className="ml-auto text-gray-300 hover:text-red-500 transition-colors p-1"
+            className="ml-auto p-1 transition-colors"
+            style={{ color: "rgba(255,255,255,0.28)" }}
+            onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.color = "#ef4444")}
+            onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.28)")}
             title="Supprimer"
           >
             <svg
