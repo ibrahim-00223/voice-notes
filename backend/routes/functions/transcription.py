@@ -12,15 +12,15 @@ async def transcribe_audio(file_bytes: bytes, filename: str = "audio.webm") -> d
     Returns: { text, language, duration }
     """
     client = AsyncOpenAI(
-        api_key=os.getenv("OPENROUTER_API_KEY"),
-        base_url="https://openrouter.ai/api/v1",
+        api_key=os.getenv("GROQ_API_KEY"),
+        base_url="https://api.groq.com/openai/v1",
     )
 
     file_obj = io.BytesIO(file_bytes)
     file_obj.name = filename
 
     response = await client.audio.transcriptions.create(
-        model="openai/whisper-1",
+        model="whisper-large-v3",
         file=file_obj,
         response_format="verbose_json",
     )
