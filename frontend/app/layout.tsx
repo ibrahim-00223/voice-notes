@@ -35,81 +35,52 @@ export default function RootLayout({
       lang="fr"
       className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#080808] text-white">
+      <body className="min-h-full" style={{ background: "#080808", color: "#fff" }}>
         {/* Nav */}
         <nav
-          className="sticky top-0 z-50 h-16 border-b border-[rgba(255,255,255,0.08)]"
-          style={{ background: "rgba(8,8,8,0.92)", backdropFilter: "blur(12px)" }}
+          className="sticky top-0 z-50 h-16"
+          style={{
+            background: "rgba(8,8,8,0.92)",
+            backdropFilter: "blur(12px)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+          }}
         >
-          <div className="max-w-5xl mx-auto px-4 md:px-8 flex items-center gap-2 h-full">
+          <div className="max-w-5xl mx-auto px-4 flex items-center gap-2 h-full">
             {/* Logo IC. */}
             <Link
               href="/"
               className="flex items-center mr-4"
-              style={{ fontFamily: "var(--font-syne)", fontWeight: 700 }}
+              style={{ fontFamily: "var(--font-syne)", fontWeight: 700, textDecoration: "none" }}
             >
-              <span className="text-xl text-white tracking-tight">IC</span>
-              <span className="text-xl" style={{ color: "#E6004C" }}>.</span>
+              <span style={{ fontSize: "1.25rem", color: "#fff", letterSpacing: "-0.02em" }}>IC</span>
+              <span style={{ fontSize: "1.25rem", color: "#E6004C" }}>.</span>
             </Link>
 
-            <Link
-              href="/"
-              className="px-3 py-1.5 text-sm rounded-md transition-colors"
-              style={{ color: "rgba(255,255,255,0.55)" }}
-              onMouseOver={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "#fff";
-                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
-              }}
-              onMouseOut={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)";
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
-            >
+            <Link href="/" className="nav-link px-3 py-1.5 text-sm rounded-md">
               Enregistrements
             </Link>
-            <Link
-              href="/notes"
-              className="px-3 py-1.5 text-sm rounded-md transition-colors"
-              style={{ color: "rgba(255,255,255,0.55)" }}
-              onMouseOver={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "#fff";
-                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
-              }}
-              onMouseOut={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)";
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
-            >
+            <Link href="/notes" className="nav-link px-3 py-1.5 text-sm rounded-md">
               Notes
             </Link>
-            <Link
-              href="/posts"
-              className="px-3 py-1.5 text-sm rounded-md transition-colors"
-              style={{ color: "rgba(255,255,255,0.55)" }}
-              onMouseOver={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "#fff";
-                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
-              }}
-              onMouseOut={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.55)";
-                (e.currentTarget as HTMLElement).style.background = "transparent";
-              }}
-            >
+            <Link href="/posts" className="nav-link px-3 py-1.5 text-sm rounded-md">
               Posts
             </Link>
           </div>
         </nav>
 
         {/* Content */}
-        <main className="max-w-5xl mx-auto px-4 md:px-8 py-8">{children}</main>
+        <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
 
         {/* Footer */}
-        <footer className="max-w-5xl mx-auto px-4 md:px-8 py-8 border-t border-[rgba(255,255,255,0.08)] mt-16">
+        <footer
+          className="max-w-5xl mx-auto px-4 py-8 mt-16"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+        >
           <p
-            className="text-xs"
             style={{
               color: "rgba(255,255,255,0.28)",
               fontFamily: "var(--font-jetbrains)",
+              fontSize: "0.75rem",
               letterSpacing: "0.08em",
             }}
           >

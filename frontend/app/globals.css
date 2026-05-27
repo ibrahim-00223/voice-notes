@@ -52,6 +52,16 @@ body {
   color: #fff;
 }
 
+/* ── Nav links ── */
+.nav-link {
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.15s, background 0.15s;
+}
+.nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
 /* ── Scrollbar ── */
 ::-webkit-scrollbar       { width: 4px; }
 ::-webkit-scrollbar-track { background: #080808; }
