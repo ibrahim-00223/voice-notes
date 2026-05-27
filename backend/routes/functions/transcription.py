@@ -8,16 +8,19 @@ load_dotenv()
 
 async def transcribe_audio(file_bytes: bytes, filename: str = "audio.webm") -> dict:
     """
-    Transcribe audio bytes using OpenAI Whisper.
+    Transcribe audio bytes using OpenRouter Whisper.
     Returns: { text, language, duration }
     """
-    client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = AsyncOpenAI(
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        base_url="https://openrouter.ai/api/v1",
+    )
 
     file_obj = io.BytesIO(file_bytes)
     file_obj.name = filename
 
     response = await client.audio.transcriptions.create(
-        model="whisper-1",
+        model="openai/whisper-1",
         file=file_obj,
         response_format="verbose_json",
     )
