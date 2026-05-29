@@ -9,7 +9,7 @@ from routes.functions.transcription import transcribe_audio
 router = APIRouter(prefix="/voice-records", tags=["voice-records"])
 
 
-@router.post("/", response_model=VoiceRecordResponse)
+@router.post("", response_model=VoiceRecordResponse)
 async def create_voice_record(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -36,7 +36,7 @@ async def create_voice_record(
     return record
 
 
-@router.get("/", response_model=list[VoiceRecordResponse])
+@router.get("", response_model=list[VoiceRecordResponse])
 def list_voice_records(
     skip: int = 0,
     limit: int = 50,

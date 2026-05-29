@@ -7,7 +7,7 @@ from models.tag import TagCreate, TagUpdate, TagResponse
 router = APIRouter(prefix="/tags", tags=["tags"])
 
 
-@router.post("/", response_model=TagResponse)
+@router.post("", response_model=TagResponse)
 def create_tag(data: TagCreate, db: Session = Depends(get_db)):
     existing = db.query(Tag).filter(Tag.name == data.name).first()
     if existing:
@@ -20,7 +20,7 @@ def create_tag(data: TagCreate, db: Session = Depends(get_db)):
     return tag
 
 
-@router.get("/", response_model=list[TagResponse])
+@router.get("", response_model=list[TagResponse])
 def list_tags(db: Session = Depends(get_db)):
     return db.query(Tag).order_by(Tag.name).all()
 

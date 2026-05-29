@@ -84,7 +84,7 @@ def send_to_nocodb(post_id: int, db: Session = Depends(get_db)):
     return {"sent": True, "nocodb_id": nocodb_record.get("Id"), "post_id": post_id}
 
 
-@router.post("/", response_model=PostResponse)
+@router.post("", response_model=PostResponse)
 def create_post(data: PostCreate, db: Session = Depends(get_db)):
     note = db.query(Note).filter(Note.id == data.note_id).first()
     if not note:
@@ -97,7 +97,7 @@ def create_post(data: PostCreate, db: Session = Depends(get_db)):
     return post
 
 
-@router.get("/", response_model=list[PostResponse])
+@router.get("", response_model=list[PostResponse])
 def list_posts(
     skip: int = 0,
     limit: int = 50,

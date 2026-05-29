@@ -8,7 +8,7 @@ from routes.functions.note_generation import generate_note
 router = APIRouter(prefix="/notes", tags=["notes"])
 
 
-@router.post("/", response_model=NoteResponse)
+@router.post("", response_model=NoteResponse)
 def create_note(data: NoteCreate, db: Session = Depends(get_db)):
     """Create a note manually from a voice record."""
     record = db.query(VoiceRecord).filter(VoiceRecord.id == data.voice_record_id).first()
@@ -54,7 +54,7 @@ def generate_note_from_record(
     return note
 
 
-@router.get("/", response_model=list[NoteResponse])
+@router.get("", response_model=list[NoteResponse])
 def list_notes(
     skip: int = 0,
     limit: int = 50,
