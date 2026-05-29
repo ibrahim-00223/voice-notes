@@ -13,7 +13,7 @@ from routes.tag import router as tag_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Voice Notes API", version="1.0.0")
+app = FastAPI(title="Voice Notes API", version="1.0.0", redirect_slashes=False)
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 
