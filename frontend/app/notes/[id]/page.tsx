@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api, Note, PostWithPlatform, Platform, formatDate } from "@/lib/api";
 import PostCard from "@/components/PostCard";
+import LLMSelector, { LLMConfig } from "@/components/LLMSelector";
 
 export default function NoteDetailPage() {
   const params = useParams<{ id: string }>();
@@ -16,6 +17,7 @@ export default function NoteDetailPage() {
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState<Platform | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [llm, setLlm] = useState<LLMConfig>({ provider: "openrouter", model: "" });
   const [savedOk, setSavedOk] = useState(false);
 
   const [title, setTitle] = useState("");
@@ -73,7 +75,7 @@ export default function NoteDetailPage() {
     setGenerating(platform);
     setError(null);
     try {
-      const post = await api.posts.generate(id, platform);
+      const post = await api.posts.generate(id, platform, llm.provider, llm.model || undefined);
       setPosts((prev) => [{ ...post, platform_name: platform }, ...prev]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur génération");
@@ -251,7 +253,8 @@ export default function NoteDetailPage() {
               ({posts.length})
             </span>
           </h2>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <LLMSelector value={llm} onChange={setLlm} />
             <button
               onClick={() => handleGenerate("linkedin")}
               disabled={generating !== null}

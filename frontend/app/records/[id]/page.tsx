@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api, VoiceRecord, Note, formatDate, formatDuration } from "@/lib/api";
 import NoteCard from "@/components/NoteCard";
+import LLMSelector, { LLMConfig } from "@/components/LLMSelector";
 
 export default function RecordDetailPage() {
   const params = useParams<{ id: string }>();
@@ -15,6 +16,7 @@ export default function RecordDetailPage() {
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [llm, setLlm] = useState<LLMConfig>({ provider: "openrouter", model: "" });
 
   useEffect(() => {
     const load = async () => {
@@ -38,7 +40,7 @@ export default function RecordDetailPage() {
     setGenerating(true);
     setError(null);
     try {
-      const note = await api.notes.generate(id);
+      const note = await api.notes.generate(id, llm.provider, llm.model || undefined);
       setNotes((prev) => [note, ...prev]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur génération");
@@ -150,7 +152,7 @@ export default function RecordDetailPage() {
 
       {/* Notes */}
       <section>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-start justify-between mb-4 gap-4 flex-wrap">
           <h2 className="text-lg font-semibold" style={{ color: "#fff" }}>
             Notes
             <span
@@ -160,6 +162,8 @@ export default function RecordDetailPage() {
               ({notes.length})
             </span>
           </h2>
+          <div className="flex items-center gap-2 flex-wrap">
+            <LLMSelector value={llm} onChange={setLlm} />
           <button
             onClick={handleGenerateNote}
             disabled={generating}
@@ -184,6 +188,7 @@ export default function RecordDetailPage() {
               <>✨ Générer une note</>
             )}
           </button>
+          </div>
         </div>
 
         {error && (
