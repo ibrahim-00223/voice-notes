@@ -17,6 +17,9 @@ async def create_voice_record(
     """Upload audio → S3 → transcribe → save voice record + note."""
     file_bytes = await file.read()
 
+    # Reset pointer — file.read() exhausts the stream, upload needs it from start
+    await file.seek(0)
+
     # Upload to S3
     s3_result = await upload_audio(file)
 
@@ -24,8 +27,10 @@ async def create_voice_record(
     transcription = await transcribe_audio(file_bytes, filename=file.filename or "audio.webm")
 
     # Save voice record
+    full_text = transcription["text"] or ""
     record = VoiceRecord(
-        title=transcription["text"][:60] if transcription["text"] else None,
+        title=full_text[:60] if full_text else None,
+        transcript=full_text or None,
         duration=int(transcription["duration"]) if transcription["duration"] else None,
         audio_file=s3_result["key"],
     )

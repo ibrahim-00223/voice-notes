@@ -15,6 +15,7 @@ class VoiceRecordResponse(BaseModel):
     datetime: datetime
     duration: Optional[int]
     audio_file: Optional[str]
+    transcript: Optional[str]
 
     class Config:
         from_attributes = True

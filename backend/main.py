@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,7 +14,24 @@ from routes.tag import router as tag_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Voice Notes API", version="1.0.0", redirect_slashes=False)
+
+def run_migrations():
+    """Idempotent schema migrations (ADD COLUMN IF NOT EXISTS)."""
+    with engine.connect() as conn:
+        conn.execute(
+            __import__("sqlalchemy").text(
+                "ALTER TABLE voice_record ADD COLUMN IF NOT EXISTS transcript TEXT"
+            )
+        )
+        conn.commit()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    run_migrations()
+    yield
+
+app = FastAPI(title="Voice Notes API", version="1.0.0", redirect_slashes=False, lifespan=lifespan)
 
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 

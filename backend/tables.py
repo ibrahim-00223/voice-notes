@@ -41,6 +41,7 @@ class VoiceRecord(Base):
     datetime = Column(DateTime(timezone=True), server_default=func.now())
     duration = Column(Integer)
     audio_file = Column(Text)
+    transcript = Column(Text)
 
     note = relationship("Note", back_populates="voice_record", uselist=False)
 

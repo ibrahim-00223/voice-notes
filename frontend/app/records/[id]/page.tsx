@@ -154,7 +154,7 @@ export default function RecordDetailPage() {
             className="text-sm leading-relaxed"
             style={{ color: "rgba(255,255,255,0.7)" }}
           >
-            {record.title || "—"}
+            {record.transcript || record.title || "—"}
           </p>
         </div>
 

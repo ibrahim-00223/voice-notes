@@ -8,6 +8,7 @@ export interface VoiceRecord {
   datetime: string;
   duration: number | null;
   audio_file: string | null;
+  transcript: string | null;
 }
 
 export interface Note {
