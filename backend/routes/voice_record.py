@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from tables import VoiceRecord
 from models.voice_record import VoiceRecordResponse
-from routes.functions.storage import upload_audio, remove_audio
+from routes.functions.storage import upload_audio, remove_audio, get_audio_url
 from routes.functions.transcription import transcribe_audio
 
 router = APIRouter(prefix="/voice-records", tags=["voice-records"])
@@ -51,6 +51,20 @@ def get_voice_record(record_id: int, db: Session = Depends(get_db)):
     if not record:
         raise HTTPException(status_code=404, detail="Voice record not found")
     return record
+
+
+@router.get("/{record_id}/audio-url")
+def get_voice_record_audio_url(record_id: int, db: Session = Depends(get_db)):
+    """Generate a fresh presigned URL for the audio file (24h expiry)."""
+    record = db.query(VoiceRecord).filter(VoiceRecord.id == record_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="Voice record not found")
+    if not record.audio_file:
+        raise HTTPException(status_code=404, detail="No audio file for this record")
+    url = get_audio_url(record.audio_file, expiration=86400)
+    if not url:
+        raise HTTPException(status_code=500, detail="Failed to generate audio URL")
+    return {"url": url}
 
 
 @router.delete("/{record_id}")

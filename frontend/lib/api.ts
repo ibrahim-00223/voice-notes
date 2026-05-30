@@ -53,12 +53,14 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
 export const api = {
   voiceRecords: {
-    list: () => apiFetch<VoiceRecord[]>("/api/voice-records/"),
+    list: () => apiFetch<VoiceRecord[]>("/api/voice-records"),
     get: (id: number) => apiFetch<VoiceRecord>(`/api/voice-records/${id}`),
+    getAudioUrl: (id: number) =>
+      apiFetch<{ url: string }>(`/api/voice-records/${id}/audio-url`),
     upload: (file: File) => {
       const form = new FormData();
       form.append("file", file);
-      return apiFetch<VoiceRecord>("/api/voice-records/", {
+      return apiFetch<VoiceRecord>("/api/voice-records", {
         method: "POST",
         body: form,
       });
@@ -70,9 +72,9 @@ export const api = {
   },
 
   notes: {
-    list: () => apiFetch<Note[]>("/api/notes/"),
+    list: () => apiFetch<Note[]>("/api/notes"),
     get: (id: number) => apiFetch<Note>(`/api/notes/${id}`),
-    generate: (voice_record_id: number, provider = "anthropic", model?: string) => {
+    generate: (voice_record_id: number, provider = "openrouter", model?: string) => {
       const p = new URLSearchParams({
         voice_record_id: String(voice_record_id),
         provider,
@@ -95,7 +97,7 @@ export const api = {
   posts: {
     list: (platform?: Platform) => {
       const qs = platform ? `?platform=${platform}` : "";
-      return apiFetch<Post[]>(`/api/posts/${qs}`);
+      return apiFetch<Post[]>(`/api/posts${qs}`);
     },
     get: (id: number) => apiFetch<Post>(`/api/posts/${id}`),
     generate: (
@@ -130,7 +132,7 @@ export const api = {
   },
 
   tags: {
-    list: () => apiFetch<Tag[]>("/api/tags/"),
+    list: () => apiFetch<Tag[]>("/api/tags"),
   },
 };
 

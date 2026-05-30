@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { api, VoiceRecord, Note, formatDate, formatDuration } from "@/lib/api";
+import AudioPlayer from "@/components/AudioPlayer";
 import NoteCard from "@/components/NoteCard";
 import LLMSelector, { LLMConfig } from "@/components/LLMSelector";
 
@@ -17,6 +18,7 @@ export default function RecordDetailPage() {
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [llm, setLlm] = useState<LLMConfig>({ provider: "openrouter", model: "" });
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -27,6 +29,13 @@ export default function RecordDetailPage() {
         ]);
         setRecord(rec);
         setNotes(allNotes.filter((n) => n.voice_record_id === id));
+
+        // Load audio URL if file exists
+        if (rec.audio_file) {
+          api.voiceRecords.getAudioUrl(id)
+            .then((d) => setAudioUrl(d.url))
+            .catch(() => null);
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Erreur");
       } finally {
@@ -148,6 +157,26 @@ export default function RecordDetailPage() {
             {record.title || "—"}
           </p>
         </div>
+
+        {/* Audio player */}
+        {record.audio_file && (
+          <div className="mt-4">
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-2"
+              style={{
+                color: "rgba(255,255,255,0.28)",
+                fontFamily: "var(--font-jetbrains)",
+                letterSpacing: "0.12em",
+              }}
+            >
+              Audio
+            </p>
+            <AudioPlayer
+              url={audioUrl}
+              filename={record.title || "enregistrement"}
+            />
+          </div>
+        )}
       </div>
 
       {/* Notes */}
