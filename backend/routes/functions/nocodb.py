@@ -10,6 +10,8 @@ NOCODB_TABLE_ID = os.getenv("NOCODB_TABLE_ID", "m85r6k10go7cmmu")
 
 
 def _headers() -> dict:
+    if not NOCODB_API_TOKEN:
+        raise ValueError("NOCODB_API_TOKEN environment variable is not set")
     return {
         "xc-token": NOCODB_API_TOKEN,
         "Content-Type": "application/json",
