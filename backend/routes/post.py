@@ -27,7 +27,7 @@ def _get_platform_id(db: Session, name: str) -> int:
 def generate_post_from_note(
     note_id: int,
     platform: str = Query(..., description="linkedin or twitter"),
-    provider: str = Query(default="anthropic"),
+    provider: str = Query(default="openrouter"),
     model: str = Query(default=None),
     db: Session = Depends(get_db),
 ):

@@ -30,7 +30,7 @@ PROVIDERS = {
 def call_llm(
     prompt: str,
     system: str,
-    provider: str = "anthropic",
+    provider: str = "openrouter",
     model: str = None,
     max_tokens: int = 1024,
 ) -> str:

@@ -25,7 +25,7 @@ def create_note(data: NoteCreate, db: Session = Depends(get_db)):
 @router.post("/generate", response_model=NoteResponse)
 def generate_note_from_record(
     voice_record_id: int,
-    provider: str = Query(default="anthropic"),
+    provider: str = Query(default="openrouter"),
     model: str = Query(default=None),
     db: Session = Depends(get_db),
 ):
