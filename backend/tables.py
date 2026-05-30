@@ -43,7 +43,7 @@ class VoiceRecord(Base):
     audio_file = Column(Text)
     transcript = Column(Text)
 
-    note = relationship("Note", back_populates="voice_record", uselist=False)
+    note = relationship("Note", back_populates="voice_record", uselist=False, cascade="all, delete-orphan", passive_deletes=True)
 
 
 class Note(Base):
@@ -56,7 +56,7 @@ class Note(Base):
     voice_record_id = Column(Integer, ForeignKey("voice_record.id", ondelete="CASCADE"), nullable=False)
 
     voice_record = relationship("VoiceRecord", back_populates="note")
-    posts = relationship("Post", back_populates="note")
+    posts = relationship("Post", back_populates="note", cascade="all, delete-orphan", passive_deletes=True)
     tags = relationship("Tag", secondary="note_tags", back_populates="notes")
 
 

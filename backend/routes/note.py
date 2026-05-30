@@ -34,11 +34,12 @@ def generate_note_from_record(
     if not record:
         raise HTTPException(status_code=404, detail="Voice record not found")
 
-    if not record.title:
+    transcript_text = record.transcript or record.title
+    if not transcript_text:
         raise HTTPException(status_code=400, detail="Voice record has no transcript")
 
     result = generate_note(
-        transcript=record.title,
+        transcript=transcript_text,
         provider=provider,
         model=model,
     )
