@@ -15,7 +15,7 @@ export default function NoteDetailPage() {
   const [posts, setPosts] = useState<PostWithPlatform[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [generating, setGenerating] = useState<Platform | null>(null);
+  const [generating, setGenerating] = useState<{ platform: Platform; bulletIndex: number | null } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [llm, setLlm] = useState<LLMConfig>({ provider: "openrouter", model: "" });
   const [savedOk, setSavedOk] = useState(false);
@@ -71,11 +71,11 @@ export default function NoteDetailPage() {
     }
   };
 
-  const handleGenerate = async (platform: Platform) => {
-    setGenerating(platform);
+  const handleGenerate = async (platform: Platform, bulletIndex?: number) => {
+    setGenerating({ platform, bulletIndex: bulletIndex ?? null });
     setError(null);
     try {
-      const post = await api.posts.generate(id, platform, llm.provider, llm.model || undefined);
+      const post = await api.posts.generate(id, platform, llm.provider, llm.model || undefined, bulletIndex);
       setPosts((prev) => [{ ...post, platform_name: platform }, ...prev]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur génération");
@@ -83,6 +83,10 @@ export default function NoteDetailPage() {
       setGenerating(null);
     }
   };
+
+  const bullets = text
+    ? text.split("\n\n").map((b) => b.trim()).filter((b) => b.length > 0)
+    : [];
 
   const handleSendToNocodb = async (postId: number) => {
     await api.posts.sendToNocodb(postId);
@@ -206,38 +210,85 @@ export default function NoteDetailPage() {
           />
         </div>
 
-        {/* Text textarea */}
+        {/* Bullets */}
         <div>
           <label
-            className="block text-xs font-semibold uppercase tracking-widest mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-widest mb-2"
             style={{
               color: "rgba(255,255,255,0.28)",
               fontFamily: "var(--font-jetbrains)",
               letterSpacing: "0.12em",
             }}
           >
-            Contenu
+            Sujets
           </label>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            rows={10}
-            className="w-full rounded-lg px-3 py-2.5 text-sm leading-relaxed outline-none transition-all resize-y"
-            style={{
-              background: "#1a1a1a",
-              border: "1px solid rgba(255,255,255,0.08)",
-              color: "rgba(255,255,255,0.85)",
-            }}
-            onFocus={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(230,0,76,0.5)";
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 2px rgba(230,0,76,0.12)";
-            }}
-            onBlur={(e) => {
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.boxShadow = "none";
-            }}
-            placeholder="Contenu de la note…"
-          />
+          {bullets.length === 0 ? (
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.28)" }}>
+              Aucun sujet détecté.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {bullets.map((bullet, i) => {
+                const isGeneratingLinkedin = generating?.platform === "linkedin" && generating?.bulletIndex === i;
+                const isGeneratingTwitter = generating?.platform === "twitter" && generating?.bulletIndex === i;
+                const isGenerating = isGeneratingLinkedin || isGeneratingTwitter;
+                return (
+                  <div
+                    key={i}
+                    className="rounded-lg p-4 border"
+                    style={{
+                      background: "#1a1a1a",
+                      borderColor: "rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <p className="text-sm leading-relaxed mb-3" style={{ color: "rgba(255,255,255,0.85)" }}>
+                      {bullet}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleGenerate("linkedin", i)}
+                        disabled={generating !== null}
+                        className="flex items-center gap-1.5 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
+                        style={{ background: "#2563eb" }}
+                        onMouseOver={(e) => {
+                          if (!generating) (e.currentTarget as HTMLElement).style.background = "#1d4ed8";
+                        }}
+                        onMouseOut={(e) => {
+                          (e.currentTarget as HTMLElement).style.background = "#2563eb";
+                        }}
+                      >
+                        {isGeneratingLinkedin ? (
+                          <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : "✨"} LinkedIn
+                      </button>
+                      <button
+                        onClick={() => handleGenerate("twitter", i)}
+                        disabled={generating !== null}
+                        className="flex items-center gap-1.5 text-white px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors disabled:opacity-50"
+                        style={{ background: "#0ea5e9" }}
+                        onMouseOver={(e) => {
+                          if (!generating) (e.currentTarget as HTMLElement).style.background = "#0284c7";
+                        }}
+                        onMouseOut={(e) => {
+                          (e.currentTarget as HTMLElement).style.background = "#0ea5e9";
+                        }}
+                      >
+                        {isGeneratingTwitter ? (
+                          <svg className="animate-spin w-3 h-3" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : "✨"} Twitter/X
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -253,53 +304,7 @@ export default function NoteDetailPage() {
               ({posts.length})
             </span>
           </h2>
-          <div className="flex items-center gap-2 flex-wrap">
-            <LLMSelector value={llm} onChange={setLlm} />
-            <button
-              onClick={() => handleGenerate("linkedin")}
-              disabled={generating !== null}
-              className="flex items-center gap-1.5 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-60"
-              style={{ background: "#2563eb" }}
-              onMouseOver={(e) => {
-                if (!generating) (e.currentTarget as HTMLElement).style.background = "#1d4ed8";
-              }}
-              onMouseOut={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#2563eb";
-              }}
-            >
-              {generating === "linkedin" ? (
-                <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : (
-                "✨"
-              )}{" "}
-              LinkedIn
-            </button>
-            <button
-              onClick={() => handleGenerate("twitter")}
-              disabled={generating !== null}
-              className="flex items-center gap-1.5 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-60"
-              style={{ background: "#0ea5e9" }}
-              onMouseOver={(e) => {
-                if (!generating) (e.currentTarget as HTMLElement).style.background = "#0284c7";
-              }}
-              onMouseOut={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "#0ea5e9";
-              }}
-            >
-              {generating === "twitter" ? (
-                <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-              ) : (
-                "✨"
-              )}{" "}
-              Twitter/X
-            </button>
-          </div>
+          <LLMSelector value={llm} onChange={setLlm} />
         </div>
 
         {posts.length === 0 ? (

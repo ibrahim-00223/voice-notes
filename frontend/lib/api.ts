@@ -105,7 +105,8 @@ export const api = {
       note_id: number,
       platform: Platform,
       provider = "anthropic",
-      model?: string
+      model?: string,
+      bullet_index?: number
     ) => {
       const p = new URLSearchParams({
         note_id: String(note_id),
@@ -113,6 +114,7 @@ export const api = {
         provider,
       });
       if (model) p.append("model", model);
+      if (bullet_index !== undefined) p.append("bullet_index", String(bullet_index));
       return apiFetch<Post>(`/api/posts/generate?${p}`, { method: "POST" });
     },
     sendToNocodb: (id: number) =>

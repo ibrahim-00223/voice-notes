@@ -29,6 +29,7 @@ def generate_post_from_note(
     platform: str = Query(..., description="linkedin or twitter"),
     provider: str = Query(default="openrouter"),
     model: str = Query(default=None),
+    bullet_index: int = Query(default=None, description="Index of the bullet point to generate from (0-based). If omitted, uses full note text."),
     db: Session = Depends(get_db),
 ):
     """Generate a LinkedIn or Twitter post from a note using AI."""
@@ -39,8 +40,16 @@ def generate_post_from_note(
     if not note.text:
         raise HTTPException(status_code=400, detail="Note has no text to generate from")
 
+    if bullet_index is not None:
+        bullets = [b.strip() for b in note.text.split("\n\n") if b.strip()]
+        if bullet_index < 0 or bullet_index >= len(bullets):
+            raise HTTPException(status_code=400, detail=f"bullet_index {bullet_index} out of range (0–{len(bullets)-1})")
+        transcript = bullets[bullet_index]
+    else:
+        transcript = note.text
+
     result = generate_post(
-        transcript=note.text,
+        transcript=transcript,
         platform=platform,
         provider=provider,
         model=model,
