@@ -1,15 +1,22 @@
 import json
 from routes.functions.llm import call_llm
 
-SYSTEM_PROMPT = """Tu es un assistant qui transforme des transcriptions vocales en notes de synthèse claires et structurées.
+SYSTEM_PROMPT = """Tu es un assistant qui transforme des transcriptions vocales en notes structurées par sujets.
 Tu réponds toujours en JSON valide avec exactement ces deux champs : "title" et "text".
 Pas de markdown, pas d'explication, uniquement le JSON."""
 
-USER_PROMPT = """Transforme cette transcription vocale en note de synthèse.
+USER_PROMPT = """Transforme cette transcription vocale en liste de sujets sous forme de bullet points.
 
 Règles :
-- "title" : titre court et précis (max 60 caractères)
-- "text" : note structurée avec les idées clés, points importants et actions si présentes. Corrige les fautes orales. Garde le sens original.
+- "title" : titre court et précis résumant le thème global (max 60 caractères)
+- "text" : liste de bullet points, un par sujet distinct abordé dans l'audio.
+  Chaque bullet doit :
+  • Commencer par "• "
+  • Identifier clairement le sujet en début de bullet (ex: "• Sujet X : ...")
+  • Développer l'idée en 2 à 4 phrases concrètes et autonomes
+  • Être suffisamment riche pour servir de base à un post LinkedIn ou Twitter
+  • Corriger les fautes orales, garder le sens original
+  Séparer chaque bullet par une ligne vide.
 
 Transcription :
 {transcript}
@@ -24,7 +31,7 @@ def generate_note(
     model: str = None,
 ) -> dict:
     """
-    Generate a synthesis note from a transcript.
+    Generate a bullet-point note (one bullet per topic) from a transcript.
     Returns: { title, text }
     """
     raw = call_llm(
